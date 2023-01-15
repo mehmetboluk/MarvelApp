@@ -19,6 +19,7 @@ class CharactersViewModel @Inject constructor(
 
     private val _marvelValue = MutableStateFlow(MarvelListState())
     var marvelValue : StateFlow<MarvelListState> = _marvelValue
+    var paginatedValue = 20
 
     fun getAllCharacters(offset: Int) = viewModelScope.launch(Dispatchers.IO) {
         charactersUseCase(offset).collect {
@@ -28,6 +29,7 @@ class CharactersViewModel @Inject constructor(
                 }
                 is Response.Success -> {
                     _marvelValue.value = MarvelListState(characterList = it.data ?: emptyList())
+                    paginatedValue += 20
                 }
                 is Response.Error -> {
                     _marvelValue.value = MarvelListState(error = it.message ?: "Unexpected Error Occurs")

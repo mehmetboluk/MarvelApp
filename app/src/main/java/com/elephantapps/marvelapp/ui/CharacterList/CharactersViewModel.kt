@@ -3,6 +3,7 @@ package com.elephantapps.marvelapp.ui.CharacterList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.elephantapps.marvelapp.domain.use_cases.CharactersUseCase
+import com.elephantapps.marvelapp.domain.use_cases.SearchedCharacterUseCase
 import com.elephantapps.marvelapp.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -14,12 +15,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CharactersViewModel @Inject constructor(
-    private val charactersUseCase: CharactersUseCase
+    private val charactersUseCase: CharactersUseCase,
+    private val  searchedCharacterUseCase: SearchedCharacterUseCase
 ): ViewModel() {
 
     private val _marvelValue = MutableStateFlow(MarvelListState())
     var marvelValue : StateFlow<MarvelListState> = _marvelValue
     var paginatedValue = 20
+
+    init {
+        getAllCharacters(paginatedValue)
+    }
 
     fun getAllCharacters(offset: Int) = viewModelScope.launch(Dispatchers.IO) {
         charactersUseCase(offset).collect {
@@ -32,6 +38,22 @@ class CharactersViewModel @Inject constructor(
                     paginatedValue += 20
                 }
                 is Response.Error -> {
+                    _marvelValue.value = MarvelListState(error = it.message ?: "Unexpected Error Occurs")
+                }
+            }
+        }
+    }
+
+    fun getAllSearchedCharacter(searchText: String) = viewModelScope.launch(Dispatchers.IO) {
+        searchedCharacterUseCase(searchText).collect {
+            when(it){
+                is Response.Loading -> {
+                    _marvelValue.value = MarvelListState(isLoading = true)
+                }
+                is  Response.Success -> {
+                    _marvelValue.value = MarvelListState(characterList = it.data ?: emptyList())
+                }
+                is  Response.Error -> {
                     _marvelValue.value = MarvelListState(error = it.message ?: "Unexpected Error Occurs")
                 }
             }

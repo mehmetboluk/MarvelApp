@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.elephantapps.marvelapp">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".MarvelApplication"
         android:allowBackup="true"

@@ -11,4 +11,8 @@ class MarvelRepositoryImpl @Inject constructor(
     override suspend fun getAllCharacter(offset: Int): CharactersDTO {
         return marvelApi.getAllCharacters(offSet = offset.toString())
     }
+
+    override suspend fun getAllSearchedCharacter(searchText: String): CharactersDTO {
+        return marvelApi.getAllSearchedCharacters(searchText = searchText)
+    }
 }

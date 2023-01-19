@@ -15,7 +15,7 @@ class CharacterListAdapter(private val context: Context, var listItem: ArrayList
     inner class CharacterListViewHolder(view: View) : RecyclerView.ViewHolder(view){
         fun bind(item: Character){
             binding.character = item
-            binding.imageUrl = "${item.thumbnail}/portrait_xlarge.${item.thumbnailExt}"
+            binding.imageUrl = "${item.thumbnail.replace("http","https")}/portrait_xlarge.${item.thumbnailExt}"
         }
     }
 
@@ -32,6 +32,12 @@ class CharacterListAdapter(private val context: Context, var listItem: ArrayList
     override fun getItemCount(): Int = listItem.size
 
     fun setData(newList: ArrayList<Character>){
+        this.listItem.addAll(newList)
+        notifyDataSetChanged()
+    }
+
+    fun setSearchData(newList: ArrayList<Character>){
+        this.listItem.clear()
         this.listItem.addAll(newList)
         notifyDataSetChanged()
     }
